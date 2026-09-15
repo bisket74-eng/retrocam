@@ -13,157 +13,209 @@
       touch-action: none; 
     }
     
-    /* 1. CAMERA VIEW UI (The "Camera Back") */
+    /* PORTRAIT WARNING */
+    #rotate-warning {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; z-index: 9999; color: white; align-items: center; justify-content: center;
+      text-align: center; font-size: 1.5rem; padding: 20px; box-sizing: border-box;
+    }
+    @media screen and (orientation: portrait) {
+      #rotate-warning { display: flex; }
+      #app-container { display: none !important; }
+    }
+
+    #app-container { height: 100%; width: 100%; }
+
+    /* 1. CAMERA VIEW UI (Landscape Grid) */
     #camera-view { 
-      display: flex; flex-direction: column; justify-content: space-between;
-      height: 100%; padding: 20px; box-sizing: border-box; 
-      /* Simulated vintage camera leatherette texture */
+      display: grid; 
+      grid-template-columns: 1fr 1fr; /* Two halves */
+      grid-template-rows: auto 1fr auto; 
+      gap: 15px; height: 100%; padding: 15px; box-sizing: border-box; 
       background-color: #1c1c1c;
       background-image: radial-gradient(#2b2b2b 15%, transparent 16%), radial-gradient(#2b2b2b 15%, transparent 16%);
-      background-size: 4px 4px;
-      background-position: 0 0, 2px 2px;
-      border: 8px solid #333; /* The metal camera body edge */
-      border-radius: 12px;
+      background-size: 4px 4px; background-position: 0 0, 2px 2px;
+      border: 8px solid #333; border-radius: 12px;
     }
     
-    /* The tiny square viewfinder */
+    /* Top Left: Viewfinder */
     .viewfinder-container {
-      width: 120px; 
-      height: 120px; 
-      margin: 10px auto 30px auto; /* Centers it near the top */
-      border: 6px solid #111; 
-      border-radius: 4px;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 2px 0 rgba(255,255,255,0.1);
-      overflow: hidden;
-      background: #000;
-      position: relative;
+      grid-column: 1; grid-row: 1 / span 2;
+      width: 100%; height: 100%; max-height: 250px;
+      border: 6px solid #111; border-radius: 4px;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+      overflow: hidden; background: #000;
     }
-    #viewfinder { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
+    #viewfinder { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Bottom Left: Darkroom Button */
+    #darkroom-btn { 
+      grid-column: 1; grid-row: 3; 
+      background: #444; color: white; 
     }
 
+    /* Top Right: Settings */
     .controls { 
-      display: flex; flex-direction: column; gap: 20px; 
-      background: #222; padding: 15px; border-radius: 8px;
-      border: 2px solid #111; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-      margin-bottom: auto;
+      grid-column: 2; grid-row: 1;
+      display: flex; flex-direction: column; gap: 15px; 
+      background: rgba(34, 34, 34, 0.9); padding: 15px; border-radius: 8px;
+      border: 2px solid #111;
     }
-    .control-group { 
-      display: flex; justify-content: space-between; align-items: center; 
-    }
-    input[type="range"] { 
-      flex: 1; margin-left: 15px; 
-    }
-    
-    .actions { 
-      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
-      margin-top: 20px;
-    }
-    button { 
-      padding: 15px; font-size: 15px; border: none; 
-      border-radius: 8px; cursor: pointer; font-weight: bold; 
-      box-shadow: 0 4px 0 #111;
-      transition: all 0.1s;
-    }
-    button:active:not(:disabled) {
-      transform: translateY(4px); box-shadow: 0 0 0 #111;
-    }
-    button:disabled {
-      opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 #000;
+    .control-group { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;}
+    input[type="range"] { flex: 1; margin-left: 10px; }
+
+    /* Middle Right: BIG Snap Button */
+    #shutter-btn { 
+      grid-column: 2; grid-row: 2; 
+      background: #ff4444; color: white; 
+      font-size: 1.5rem; height: 100%; /* Fills the space for easy thumb access */
     }
 
-    #shutter-btn { background: #ff4444; color: white; }
-    #wind-btn { background: #b0b0b0; color: #111; }
-    #darkroom-btn { grid-column: span 2; background: #444; color: white; margin-top: 10px; }
+    /* Bottom Right: Wind Button */
+    #wind-btn { 
+      grid-column: 2; grid-row: 3; 
+      background: #b0b0b0; color: #111; 
+    }
+
+    button { 
+      padding: 15px; border: none; border-radius: 8px; 
+      cursor: pointer; font-weight: bold; box-shadow: 0 4px 0 #111; transition: all 0.1s;
+    }
+    button:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #111; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 #000; }
 
     /* 2. DARKROOM VIEW UI */
     #darkroom-view { 
-      display: none; 
-      grid-template-columns: repeat(3, 1fr); gap: 20px; 
-      padding: 20px; height: 100%; 
-      background-color: #1a1a1a; position: relative; 
-      box-sizing: border-box; 
+      display: none; grid-template-columns: repeat(3, 1fr); gap: 15px; 
+      padding: 15px; height: 100%; background-color: #1a1a1a; position: relative; box-sizing: border-box; 
     }
     .tray { 
       background-color: #2a2a2a; border-radius: 12px; 
-      box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 8px #d3d3d3; 
+      box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 6px #d3d3d3; 
       display: flex; align-items: center; justify-content: center; 
-      color: #555; font-weight: bold; font-size: 1.5rem;
-      position: relative;
+      color: #555; font-weight: bold; font-size: 1.2rem; position: relative;
     }
-    .tray-label {
-      position: absolute; pointer-events: none;
-    }
+    .tray-label { position: absolute; pointer-events: none; }
     
     #developed-photo {
-      width: 80%; height: 80%; 
-      object-fit: cover; 
-      border: 6px solid #e0e0e0; 
-      border-radius: 2px;
+      width: 70%; height: auto; aspect-ratio: 4/3; object-fit: cover; 
+      border: 6px solid #e0e0e0; border-radius: 2px;
       filter: grayscale(100%) contrast(1.3) sepia(20%); 
-      opacity: 0; 
-      transition: opacity 8s ease-in-out; 
-      z-index: 5;
-      display: none; 
-      cursor: grab;
-      touch-action: none; 
-      position: absolute; 
+      opacity: 0; /* Starts invisible */
+      transition: opacity 1.5s ease-in-out; 
+      z-index: 5; display: none; cursor: grab; touch-action: none; position: absolute; 
     }
     #developed-photo:active { cursor: grabbing; }
-    #developed-photo.developing { opacity: 1; }
+
+    /* Opacity stages for the trays */
+    .dev-stage-0 { opacity: 0 !important; }
+    .dev-stage-1 { opacity: 0.3 !important; } /* Developer */
+    .dev-stage-2 { opacity: 0.7 !important; } /* Stop Bath */
+    .dev-stage-3 { opacity: 1.0 !important; } /* Fixer */
 
     .safelight-overlay { 
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-      background-color: red; mix-blend-mode: multiply; 
-      pointer-events: none; opacity: 0.85; z-index: 10; 
+      background-color: red; mix-blend-mode: multiply; pointer-events: none; opacity: 0.85; z-index: 10; 
     }
-    #exit-darkroom-btn { 
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); 
-      padding: 10px 20px; background: #fff; color: #000; z-index: 20; 
+    
+    .darkroom-actions {
+      position: absolute; bottom: 15px; left: 0; width: 100%;
+      display: flex; justify-content: center; gap: 20px; z-index: 20;
     }
+    #exit-darkroom-btn { background: #fff; color: #000; }
+    #hang-btn { background: #4CAF50; color: white; display: none; } /* Hidden until fixer */
+    #view-clothesline-btn { background: #2196F3; color: white; }
+
+    /* 3. CLOTHESLINE VIEW UI */
+    #clothesline-view {
+      display: none; height: 100%; padding: 20px; box-sizing: border-box;
+      background: #2c2c2c; flex-direction: column; position: relative;
+    }
+    .wire {
+      position: absolute; top: 80px; left: 0; width: 100%; height: 4px;
+      background: #555; box-shadow: 0 5px 10px rgba(0,0,0,0.5); z-index: 1;
+    }
+    #gallery {
+      display: flex; gap: 20px; overflow-x: auto; padding-top: 40px; z-index: 2; height: 100%;
+    }
+    .hung-photo {
+      height: 150px; border: 8px solid #eee; border-radius: 2px;
+      filter: grayscale(100%) contrast(1.3) sepia(20%);
+      box-shadow: 3px 5px 15px rgba(0,0,0,0.6);
+      transform-origin: top center; cursor: pointer;
+      /* Random slight rotations applied in JS */
+    }
+    #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #fff; color: #000; z-index: 10;}
+
+    /* 4. LIGHTBOX (View full hung photo) */
+    #lightbox {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center;
+    }
+    #lightbox img { max-width: 90%; max-height: 90%; border: 15px solid #eee; filter: grayscale(100%) contrast(1.3) sepia(20%);}
+    #close-lightbox { position: absolute; top: 20px; right: 20px; background: #ff4444; color: #fff;}
+
   </style>
 </head>
 <body>
 
-  <!-- CAMERA HTML -->
-  <div id="camera-view">
-    <div class="viewfinder-container">
-      <video id="viewfinder" autoplay playsinline></video>
-    </div>
-    
-    <canvas id="capture-canvas" style="display: none;"></canvas>
-    
-    <div class="controls">
-      <div class="control-group">
-        <label>ISO</label>
-        <input type="range" class="manual-dial" min="100" max="3200" step="100" value="400">
-      </div>
-      <div class="control-group">
-        <label>Focus</label>
-        <input type="range" class="manual-dial" min="0" max="100" value="50">
-      </div>
-    </div>
+  <div id="rotate-warning">Please rotate your phone to landscape to use the camera.</div>
 
-    <div class="actions">
-      <button id="shutter-btn">SNAP PHOTO</button>
+  <div id="app-container">
+    <!-- CAMERA HTML -->
+    <div id="camera-view">
+      <div class="viewfinder-container">
+        <video id="viewfinder" autoplay playsinline></video>
+      </div>
+      
+      <div class="controls">
+        <div class="control-group">
+          <label>ISO</label>
+          <input type="range" class="manual-dial" min="100" max="3200" step="100" value="400">
+        </div>
+        <div class="control-group">
+          <label>Focus</label>
+          <input type="range" class="manual-dial" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <canvas id="capture-canvas" style="display: none;"></canvas>
+
+      <button id="shutter-btn">SNAP</button>
       <button id="wind-btn" disabled>WIND FILM</button>
-      <button id="darkroom-btn">ENTER DARKROOM</button>
+      <button id="darkroom-btn">DARKROOM</button>
     </div>
-  </div>
 
-  <!-- DARKROOM HTML -->
-  <div id="darkroom-view">
-    <div class="tray developer" id="tray-dev">
-      <div class="tray-label">Developer</div>
-      <img id="developed-photo" src="" alt="Developing print" draggable="false">
+    <!-- DARKROOM HTML -->
+    <div id="darkroom-view">
+      <div class="tray developer" id="tray-dev">
+        <div class="tray-label">Developer</div>
+        <img id="developed-photo" class="dev-stage-0" src="" alt="print" draggable="false">
+      </div>
+      <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop Bath</div></div>
+      <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
+      
+      <div class="safelight-overlay"></div>
+      
+      <div class="darkroom-actions">
+        <button id="exit-darkroom-btn">Back to Camera</button>
+        <button id="hang-btn">HANG PHOTO</button>
+        <button id="view-clothesline-btn">View Clothesline</button>
+      </div>
     </div>
-    <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop Bath</div></div>
-    <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
-    
-    <div class="safelight-overlay"></div>
-    <button id="exit-darkroom-btn">Leave Darkroom</button>
+
+    <!-- CLOTHESLINE HTML -->
+    <div id="clothesline-view">
+      <div class="wire"></div>
+      <div id="gallery"></div>
+      <button id="back-to-darkroom-btn">Back</button>
+    </div>
+
+    <!-- LIGHTBOX HTML -->
+    <div id="lightbox">
+      <button id="close-lightbox">CLOSE</button>
+      <img id="lightbox-img" src="">
+    </div>
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
@@ -171,31 +223,37 @@
     // Audio Setup
     const shutterSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2299/2299-preview.mp3'); 
     const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2626/2626-preview.mp3'); 
-    const dialClickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'); 
-    dialClickSound.volume = 0.4;
 
     // DOM Elements
     const cameraView = document.getElementById('camera-view');
     const darkroomView = document.getElementById('darkroom-view');
+    const clotheslineView = document.getElementById('clothesline-view');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
     const shutterBtn = document.getElementById('shutter-btn');
     const windBtn = document.getElementById('wind-btn');
     const darkroomBtn = document.getElementById('darkroom-btn');
     const exitDarkroomBtn = document.getElementById('exit-darkroom-btn');
-    const dials = document.querySelectorAll('.manual-dial');
-    const viewfinder = document.getElementById('viewfinder');
+    const hangBtn = document.getElementById('hang-btn');
+    const viewClotheslineBtn = document.getElementById('view-clothesline-btn');
+    const backToDarkroomBtn = document.getElementById('back-to-darkroom-btn');
+    const closeLightboxBtn = document.getElementById('close-lightbox');
     
+    const viewfinder = document.getElementById('viewfinder');
     const captureCanvas = document.getElementById('capture-canvas');
     const ctx = captureCanvas.getContext('2d');
+    
     const developedPhoto = document.getElementById('developed-photo');
     const devTray = document.getElementById('tray-dev');
+    const gallery = document.getElementById('gallery');
     
-    let photoCaptured = false;
-    let isFilmWound = true; // Tracks if the camera is ready to fire
+    let isFilmWound = true; 
+    let currentPhotoDataUrl = null;
 
-    // Camera Feed
+    // Start Camera
     async function startCamera() {
       try {
-        // We ensure we grab the rear camera
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         viewfinder.srcObject = stream;
       } catch (err) {
@@ -206,28 +264,28 @@
 
     // 1. Shutter: Capture Photo
     shutterBtn.addEventListener('click', () => {
-      if (!isFilmWound) return; // Failsafe
+      if (!isFilmWound) return; 
 
       shutterSound.currentTime = 0;
       shutterSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate(100);
 
-      // Capture Image
       captureCanvas.width = viewfinder.videoWidth;
       captureCanvas.height = viewfinder.videoHeight;
       ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height);
       
-      developedPhoto.src = captureCanvas.toDataURL('image/jpeg');
+      currentPhotoDataUrl = captureCanvas.toDataURL('image/jpeg');
+      developedPhoto.src = currentPhotoDataUrl;
+      
+      // Reset photo state
       developedPhoto.style.display = 'block';
+      developedPhoto.className = 'dev-stage-0'; // Invisible
+      hangBtn.style.display = 'none';
       
       devTray.appendChild(developedPhoto);
       xOffset = 0; yOffset = 0; 
       setTranslate(0, 0, developedPhoto);
 
-      developedPhoto.classList.remove('developing');
-      photoCaptured = true;
-
-      // Lock shutter, require winding
       isFilmWound = false;
       shutterBtn.disabled = true;
       windBtn.disabled = false;
@@ -235,48 +293,73 @@
 
     // 2. Winder: Advance Film
     windBtn.addEventListener('click', () => {
-      if (isFilmWound) return; // Failsafe
-
+      if (isFilmWound) return; 
       filmWindSound.currentTime = 0;
       filmWindSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate([30, 40, 30, 40]);
 
-      // Re-arm shutter
       isFilmWound = true;
       windBtn.disabled = true;
       shutterBtn.disabled = false;
     });
 
-    // Dials
-    dials.forEach(dial => {
-      dial.addEventListener('input', () => {
-        dialClickSound.currentTime = 0;
-        dialClickSound.play().catch(e => {});
-        if (navigator.vibrate) navigator.vibrate(15);
-      });
-    });
-
-    // Enter Darkroom
+    // View Switching
     darkroomBtn.addEventListener('click', () => {
       cameraView.style.display = 'none';
       darkroomView.style.display = 'grid';
-
-      if (photoCaptured) {
-        setTimeout(() => developedPhoto.classList.add('developing'), 500); 
+      // Auto-start developer bath opacity if photo exists and is in dev tray
+      if (currentPhotoDataUrl && developedPhoto.parentElement.id === 'tray-dev') {
+         setTimeout(() => { developedPhoto.className = 'dev-stage-1'; }, 100);
       }
-
-      document.documentElement.requestFullscreen().then(() => {
-        return screen.orientation.lock('landscape');
-      }).catch(err => console.log(err));
     });
 
-    // Leave Darkroom
     exitDarkroomBtn.addEventListener('click', () => {
       darkroomView.style.display = 'none';
-      cameraView.style.display = 'flex';
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(err => console.log(err));
-      }
+      cameraView.style.display = 'grid';
+    });
+
+    viewClotheslineBtn.addEventListener('click', () => {
+      darkroomView.style.display = 'none';
+      clotheslineView.style.display = 'flex';
+    });
+
+    backToDarkroomBtn.addEventListener('click', () => {
+      clotheslineView.style.display = 'none';
+      darkroomView.style.display = 'grid';
+    });
+
+    // Hang Photo Logic
+    hangBtn.addEventListener('click', () => {
+      if (!currentPhotoDataUrl) return;
+
+      // Create thumbnail for clothesline
+      const img = document.createElement('img');
+      img.src = currentPhotoDataUrl;
+      img.className = 'hung-photo';
+      // Slight random swing rotation between -5 and 5 degrees
+      const rotation = (Math.random() * 10) - 5;
+      img.style.transform = `rotate(${rotation}deg)`;
+      
+      // Click to view full size
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.style.display = 'flex';
+      });
+
+      gallery.appendChild(img);
+
+      // Hide photo in darkroom, reset state
+      developedPhoto.style.display = 'none';
+      currentPhotoDataUrl = null;
+      hangBtn.style.display = 'none';
+      
+      // Auto transition to clothesline view
+      darkroomView.style.display = 'none';
+      clotheslineView.style.display = 'flex';
+    });
+
+    closeLightboxBtn.addEventListener('click', () => {
+      lightbox.style.display = 'none';
     });
 
     // Drag and Drop Logic
@@ -328,6 +411,19 @@
           tray.appendChild(developedPhoto);
           xOffset = 0; yOffset = 0;
           setTranslate(0, 0, developedPhoto);
+
+          // Update photo stage based on tray
+          if (tray.id === 'tray-dev') {
+            developedPhoto.className = 'dev-stage-1';
+            hangBtn.style.display = 'none';
+          } else if (tray.id === 'tray-stop') {
+            developedPhoto.className = 'dev-stage-2';
+            hangBtn.style.display = 'none';
+          } else if (tray.id === 'tray-fix') {
+            developedPhoto.className = 'dev-stage-3';
+            // Enable hanging only in the final bath
+            hangBtn.style.display = 'block'; 
+          }
         } else {
           xOffset = 0; yOffset = 0;
           setTranslate(0, 0, developedPhoto);
