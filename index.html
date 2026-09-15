@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Retro Camera & Darkroom</title>
+  <title>Retro SLR Camera</title>
   <style>
-    /* BASE STYLES */
     body, html { 
       margin: 0; padding: 0; height: 100%; 
       background: #000; font-family: 'Courier New', Courier, monospace; 
@@ -21,92 +20,112 @@
       #rotate-warning { display: flex; }
       #app-container { display: none !important; }
     }
-    #app-container { height: 100%; width: 100%; }
+    #app-container { height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #222;}
 
     /* =========================================
-       1. CAMERA VIEW (The Mechanical Back)
+       1. SLR CAMERA BODY
        ========================================= */
     #camera-view { 
-      display: flex; justify-content: space-between; align-items: stretch;
-      height: 100%; padding: 15px; box-sizing: border-box; 
-      /* Hard pebble leather / plastic texture */
-      background-color: #1a1a1a;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h4v4H0V0zm4 4h4v4H4V4z' fill='%23111111' fill-opacity='0.6'/%3E%3C/svg%3E");
-      border: 10px solid #2a2a2a; border-radius: 6px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+      display: flex; flex-direction: column;
+      width: 100%; height: 100%; max-width: 900px;
+      box-sizing: border-box; 
+      border: 6px solid #111; border-radius: 8px;
+      position: relative;
     }
 
-    /* LEFT SIDE: Viewfinder & Dials */
-    .left-panel {
-      display: flex; flex-direction: column; gap: 15px; width: 140px;
+    /* THE SILVER TOP PLATE */
+    .top-plate {
+      height: 100px;
+      background: linear-gradient(to bottom, #f0f0f0, #c0c0c0, #999);
+      border-bottom: 3px solid #111;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 10px 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
+      position: relative; z-index: 2;
+    }
+
+    /* Left: Dials */
+    .top-left-controls { display: flex; gap: 10px; margin-top: 15px; }
+    .tiny-dial {
+      width: 35px; height: 35px; background: #222; 
+      border: 3px solid #111; border-radius: 50%;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 0 0 5px #555;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.5rem; font-weight: bold; color: #aaa;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #333 2px, #333 4px);
+    }
+
+    /* Center: SLR Viewfinder Hump */
+    .viewfinder-hump {
+      position: absolute; left: 50%; transform: translateX(-50%); top: 10px;
+      background: #111; padding: 8px 15px; border-radius: 4px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.6);
+      border: 2px solid #333;
     }
     .viewfinder-square {
-      width: 100px; height: 100px; /* Small 1x1 square */
-      border: 8px solid #111; border-radius: 4px;
-      background: #000; box-shadow: inset 0 0 10px #000;
-      overflow: hidden; margin-top: 10px;
+      width: 60px; height: 40px; /* Tiny SLR window */
+      border: 4px solid #000; border-radius: 2px;
+      background: #000; overflow: hidden;
     }
     #viewfinder { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Right: Shutter & Counter */
+    .top-right-controls { display: flex; gap: 15px; align-items: center; margin-top: 10px;}
     
-    .tiny-dials { display: flex; gap: 10px; }
-    .tiny-dial {
-      width: 45px; height: 45px; background: #333; 
-      border: 2px solid #111; border-radius: 50%;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.8);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.6rem; font-weight: bold; color: #888; text-align: center;
-    }
-
-    /* CENTER: Film Counter & Darkroom Button */
-    .center-panel {
-      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-      flex: 1; padding: 10px 0;
-    }
     .film-counter-window {
-      width: 50px; height: 40px; background: #000;
-      border: 3px solid #111; border-radius: 4px;
-      box-shadow: inset 0 4px 8px rgba(0,0,0,0.8);
+      width: 30px; height: 30px; background: #111;
+      border: 2px solid #555; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      color: #ff3333; font-size: 1.5rem; font-weight: bold; font-family: monospace;
-    }
-    #darkroom-btn { 
-      background: #2a2a2a; color: #aaa; border: 2px solid #111;
-      padding: 10px 20px; font-weight: bold; border-radius: 4px; box-shadow: 0 4px 0 #000;
+      color: #ff3333; font-size: 0.9rem; font-weight: bold; font-family: monospace;
+      box-shadow: inset 0 2px 5px #000;
     }
 
-    /* RIGHT SIDE: Shutter & Thumb Winder */
-    .right-panel {
-      display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 120px;
-    }
     #shutter-btn { 
-      width: 80px; height: 80px; /* Small 1x1 square for the right thumb */
-      background: #cc2222; border: 4px solid #111; border-radius: 6px;
-      box-shadow: 0 6px 0 #000; margin-top: 20px; transition: all 0.1s;
+      width: 45px; height: 45px;
+      background: linear-gradient(to bottom, #dcdcdc, #888); border: 2px solid #111; border-radius: 50%;
+      box-shadow: 0 4px 0 #333, inset 0 2px 5px #fff; cursor: pointer; transition: all 0.1s;
     }
-    #shutter-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 #000; }
-    #shutter-btn:disabled { background: #551111; box-shadow: 0 6px 0 #000; transform: none; }
+    #shutter-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #333; }
+    #shutter-btn:disabled { filter: brightness(0.5); transform: none; box-shadow: 0 4px 0 #333; }
 
-    /* The thumb winder area */
+    /* THE BLACK BACK DOOR */
+    .back-door {
+      flex: 1;
+      background-color: #1a1a1a;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h4v4H0V0zm4 4h4v4H4V4z' fill='%23111111' fill-opacity='0.6'/%3E%3C/svg%3E");
+      position: relative;
+    }
+
+    /* Thumb Winder on the right edge */
+    .winder-area {
+      position: absolute; right: 20px; top: 20px;
+      display: flex; flex-direction: column; align-items: center;
+    }
     .winder-container {
-      width: 100px; height: 60px; background: #111;
-      border: 4px solid #222; border-radius: 8px; margin-bottom: 20px;
-      overflow: hidden; position: relative; box-shadow: inset 0 0 10px #000;
+      width: 80px; height: 40px; background: #0a0a0a;
+      border: 3px solid #222; border-radius: 4px; overflow: hidden; position: relative; 
+      box-shadow: inset 0 0 10px #000;
     }
     #winder-wheel {
       width: 200%; height: 100%;
-      background: repeating-linear-gradient(to right, #444, #444 4px, #222 4px, #222 8px);
+      background: repeating-linear-gradient(to right, #444, #444 4px, #111 4px, #111 8px);
       position: absolute; left: 0; top: 0;
     }
-    .winder-label {
-      position: absolute; width: 100%; text-align: center; bottom: -20px; font-size: 0.7rem; color: #666;
+    .winder-label { font-size: 0.6rem; color: #888; margin-top: 5px; font-family: sans-serif;}
+
+    /* Darkroom Latch */
+    #darkroom-btn { 
+      position: absolute; left: 20px; bottom: 20px;
+      background: #2a2a2a; color: #aaa; border: 2px solid #111;
+      padding: 10px 15px; font-size: 0.7rem; font-weight: bold; border-radius: 2px; 
+      box-shadow: 2px 2px 5px #000; text-transform: uppercase;
     }
 
     /* =========================================
-       2. DARKROOM VIEW & TIMERS
+       2. DARKROOM VIEW & TIMERS (Hidden initially)
        ========================================= */
     #darkroom-view { 
       display: none; grid-template-columns: repeat(3, 1fr); gap: 15px; 
-      padding: 15px; height: 100%; background-color: #1a1a1a; position: relative; box-sizing: border-box; 
+      padding: 15px; height: 100%; width: 100%; background-color: #1a1a1a; position: relative; box-sizing: border-box; 
     }
     
     #undeveloped-pile {
@@ -124,7 +143,6 @@
     }
     .tray-label { position: absolute; pointer-events: none; }
     
-    /* The Photo Print */
     #active-print {
       width: 70%; height: auto; aspect-ratio: 4/3; object-fit: cover; 
       border: 6px solid #e0e0e0; border-radius: 2px;
@@ -134,7 +152,6 @@
     }
     #active-print:active { cursor: grabbing; }
 
-    /* Processing Animation */
     @keyframes pulse-process {
       0% { filter: grayscale(100%) brightness(0.5); transform: scale(0.98); }
       50% { filter: grayscale(100%) brightness(1.2); transform: scale(1); }
@@ -164,7 +181,7 @@
        3. CLOTHESLINE VIEW
        ========================================= */
     #clothesline-view {
-      display: none; height: 100%; padding: 20px; box-sizing: border-box;
+      display: none; width: 100%; height: 100%; padding: 20px; box-sizing: border-box;
       background: #2c2c2c; flex-direction: column; position: relative;
     }
     .wire {
@@ -177,19 +194,16 @@
     .hung-photo {
       height: 150px; border: 8px solid #eee; border-radius: 2px;
       filter: grayscale(100%) contrast(1.3) sepia(20%);
-      box-shadow: 3px 5px 15px rgba(0,0,0,0.6);
-      transform-origin: top center; cursor: pointer;
+      box-shadow: 3px 5px 15px rgba(0,0,0,0.6); transform-origin: top center; cursor: pointer;
     }
     #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #fff; color: #000; border: none; padding: 10px; z-index: 10;}
 
-    /* LIGHTBOX */
     #lightbox {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center;
     }
     #lightbox img { max-width: 90%; max-height: 90%; border: 15px solid #eee; filter: grayscale(100%) contrast(1.3) sepia(20%);}
     #close-lightbox { position: absolute; top: 20px; right: 20px; background: #ff4444; color: #fff; border: none; padding: 10px;}
-
   </style>
 </head>
 <body>
@@ -200,29 +214,37 @@
     
     <!-- CAMERA HTML -->
     <div id="camera-view">
-      <div class="left-panel">
-        <div class="viewfinder-square">
-          <video id="viewfinder" autoplay playsinline></video>
-        </div>
-        <div class="tiny-dials">
+      
+      <!-- TOP CHROME PLATE -->
+      <div class="top-plate">
+        <div class="top-left-controls">
           <div class="tiny-dial">ISO</div>
           <div class="tiny-dial">FOC</div>
         </div>
-      </div>
-      
-      <div class="center-panel">
-        <div class="film-counter-window"><span id="counter-text">12</span></div>
-        <button id="darkroom-btn">DARKROOM</button>
+        
+        <div class="viewfinder-hump">
+          <div class="viewfinder-square">
+            <video id="viewfinder" autoplay playsinline></video>
+          </div>
+        </div>
+
+        <div class="top-right-controls">
+          <div class="film-counter-window"><span id="counter-text">12</span></div>
+          <button id="shutter-btn" disabled></button>
+        </div>
       </div>
 
-      <div class="right-panel">
-        <button id="shutter-btn" disabled></button> <!-- Disabled until wound -->
-        <div style="position:relative;">
+      <!-- BLACK TEXTURED BACK DOOR -->
+      <div class="back-door">
+        
+        <div class="winder-area">
           <div class="winder-container" id="winder-hitbox">
             <div id="winder-wheel"></div>
           </div>
-          <div class="winder-label">SWIPE TO WIND</div>
+          <div class="winder-label">SWIPE</div>
         </div>
+
+        <button id="darkroom-btn">OPEN BACK</button>
       </div>
 
       <canvas id="capture-canvas" style="display: none;"></canvas>
@@ -231,14 +253,12 @@
     <!-- DARKROOM HTML -->
     <div id="darkroom-view">
       <div id="undeveloped-pile">FILM<br>(0)</div>
-      
       <div class="tray developer" id="tray-dev">
         <div class="tray-label">Developer</div>
         <img id="active-print" class="dev-stage-0" src="" draggable="false">
       </div>
-      <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop Bath</div></div>
+      <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop</div></div>
       <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
-      
       <div class="safelight-overlay"></div>
       
       <div class="darkroom-actions">
@@ -263,12 +283,10 @@
   </div>
 
   <script>
-    // Audio Setup
     const shutterSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2299/2299-preview.mp3'); 
-    const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'); // Shorter gear clicks
+    const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'); 
     filmWindSound.volume = 0.5;
 
-    // DOM Elements
     const views = {
       camera: document.getElementById('camera-view'),
       darkroom: document.getElementById('darkroom-view'),
@@ -287,19 +305,16 @@
     const captureCanvas = document.getElementById('capture-canvas');
     const ctx = captureCanvas.getContext('2d');
 
-    // Camera State
     const MAX_SHOTS = 12;
     let shotsRemaining = MAX_SHOTS;
-    let isFilmWound = false; // Must wind before first shot
-    let filmRoll = []; // Array to hold up to 12 data URLs
+    let isFilmWound = false; 
+    let filmRoll = []; 
 
-    // View Routing
     document.getElementById('darkroom-btn').addEventListener('click', () => { views.camera.style.display = 'none'; views.darkroom.style.display = 'grid'; });
     document.getElementById('exit-darkroom-btn').addEventListener('click', () => { views.darkroom.style.display = 'none'; views.camera.style.display = 'flex'; });
     document.getElementById('view-clothesline-btn').addEventListener('click', () => { views.darkroom.style.display = 'none'; views.clothesline.style.display = 'flex'; });
     document.getElementById('back-to-darkroom-btn').addEventListener('click', () => { views.clothesline.style.display = 'none'; views.darkroom.style.display = 'grid'; });
 
-    // Start Camera
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -308,134 +323,93 @@
     }
     startCamera();
 
-    // 1. SWIPE TO WIND FILM
     let swipeStartX = 0;
     let swipeDistance = 0;
 
     winderHitbox.addEventListener('pointerdown', e => { swipeStartX = e.clientX; });
     winderHitbox.addEventListener('pointermove', e => {
       if (!swipeStartX || isFilmWound || shotsRemaining === 0) return;
-      
       let diff = e.clientX - swipeStartX;
-      if (diff > 0) { // Only swipe right
+      if (diff > 0) {
         swipeDistance += diff;
         swipeStartX = e.clientX; 
-        
-        // Move the CSS background to look like it's spinning
         winderWheel.style.transform = `translateX(${-swipeDistance % 20}px)`;
-
-        // Play click sound roughly every 20px of swipe
         if (swipeDistance % 20 < 5) {
             filmWindSound.currentTime = 0;
             filmWindSound.play().catch(()=>{});
             if(navigator.vibrate) navigator.vibrate(10);
         }
-
-        // When swiped far enough, film is wound
         if (swipeDistance > 150) {
-          isFilmWound = true;
-          swipeStartX = 0;
-          swipeDistance = 0;
+          isFilmWound = true; swipeStartX = 0; swipeDistance = 0;
           shutterBtn.disabled = false;
-          if(navigator.vibrate) navigator.vibrate([30, 50, 30]); // Clack!
+          if(navigator.vibrate) navigator.vibrate([30, 50, 30]); 
         }
       }
     });
     winderHitbox.addEventListener('pointerup', () => { swipeStartX = 0; });
 
-    // 2. SHUTTER SNAP
     shutterBtn.addEventListener('click', () => {
       if (!isFilmWound || shotsRemaining === 0) return; 
-
       shutterSound.currentTime = 0;
       shutterSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate(100);
 
-      // Capture Image
       captureCanvas.width = viewfinder.videoWidth;
       captureCanvas.height = viewfinder.videoHeight;
       ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height);
       
-      // Save to film roll
       filmRoll.push(captureCanvas.toDataURL('image/jpeg'));
       shotsRemaining--;
       counterText.innerText = shotsRemaining;
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
 
-      // Lock shutter, require winding again
-      isFilmWound = false;
-      shutterBtn.disabled = true;
+      isFilmWound = false; shutterBtn.disabled = true;
     });
 
-    // 3. DARKROOM LOGIC (Developing one by one)
     let isPhotoProcessing = false;
     let currentTrayId = '';
 
-    // Tap the pile to pull out one photo
     undevelopedPile.addEventListener('click', () => {
       if (filmRoll.length === 0) return;
-      if (activePrint.style.display === 'block') {
-        alert("Finish developing the current photo first!");
-        return;
-      }
+      if (activePrint.style.display === 'block') { alert("Finish developing the current photo first!"); return; }
 
-      // Grab the oldest photo from the array
       const photoData = filmRoll.shift(); 
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
-      
       activePrint.src = photoData;
       activePrint.style.display = 'block';
-      activePrint.className = ''; // Reset opacity
-      
+      activePrint.className = ''; 
       devTray.appendChild(activePrint);
       setTranslate(0, 0, activePrint);
-      
-      // Auto-start developer timer
       triggerBathTimer('tray-dev');
     });
 
     function triggerBathTimer(trayId) {
-      isPhotoProcessing = true;
-      currentTrayId = trayId;
-      hangBtn.style.display = 'none';
-
-      // Visual feedback that it is processing
+      isPhotoProcessing = true; currentTrayId = trayId; hangBtn.style.display = 'none';
       activePrint.classList.add('processing');
       if (navigator.vibrate) navigator.vibrate(50);
 
-      // 3-second timer per bath
       setTimeout(() => {
-        isPhotoProcessing = false;
-        activePrint.classList.remove('processing');
-        if (navigator.vibrate) navigator.vibrate([20, 50, 20]); // Ding!
-
-        // Apply correct opacity stage
+        isPhotoProcessing = false; activePrint.classList.remove('processing');
+        if (navigator.vibrate) navigator.vibrate([20, 50, 20]); 
         if (trayId === 'tray-dev') activePrint.className = 'dev-stage-1';
         if (trayId === 'tray-stop') activePrint.className = 'dev-stage-2';
-        if (trayId === 'tray-fix') {
-          activePrint.className = 'dev-stage-3';
-          hangBtn.style.display = 'block'; // Can only hang after fixer
-        }
+        if (trayId === 'tray-fix') { activePrint.className = 'dev-stage-3'; hangBtn.style.display = 'block'; }
       }, 3000); 
     }
 
-    // 4. DRAG & DROP
     let isDragging = false;
     let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
 
     activePrint.addEventListener("pointerdown", e => {
-      if (isPhotoProcessing) return; // Locked while timer runs
-      initialX = e.clientX - xOffset;
-      initialY = e.clientY - yOffset;
-      isDragging = true;
-      activePrint.style.zIndex = 100;
+      if (isPhotoProcessing) return; 
+      initialX = e.clientX - xOffset; initialY = e.clientY - yOffset;
+      isDragging = true; activePrint.style.zIndex = 100;
     });
 
     document.addEventListener("pointermove", e => {
       if (isDragging) {
         e.preventDefault();
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
+        currentX = e.clientX - initialX; currentY = e.clientY - initialY;
         xOffset = currentX; yOffset = currentY;
         setTranslate(currentX, currentY, activePrint);
       }
@@ -445,9 +419,7 @@
 
     document.addEventListener("pointerup", e => {
       if (!isDragging) return;
-      isDragging = false;
-      activePrint.style.zIndex = 5;
-
+      isDragging = false; activePrint.style.zIndex = 5;
       activePrint.style.visibility = 'hidden';
       const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
       activePrint.style.visibility = 'visible';
@@ -455,38 +427,25 @@
       if (dropTarget) {
         const tray = dropTarget.closest('.tray');
         if (tray && tray.id !== currentTrayId) {
-          // Moved to a NEW tray
-          tray.appendChild(activePrint);
-          xOffset = 0; yOffset = 0;
-          setTranslate(0, 0, activePrint);
-          triggerBathTimer(tray.id); // Start the timer for the new bath
+          tray.appendChild(activePrint); xOffset = 0; yOffset = 0;
+          setTranslate(0, 0, activePrint); triggerBathTimer(tray.id); 
         } else {
-          // Snap back
           xOffset = 0; yOffset = 0; setTranslate(0, 0, activePrint);
         }
       }
     });
 
-    // 5. HANG PHOTO
     hangBtn.addEventListener('click', () => {
       const img = document.createElement('img');
-      img.src = activePrint.src;
-      img.className = 'hung-photo';
+      img.src = activePrint.src; img.className = 'hung-photo';
       img.style.transform = `rotate(${(Math.random() * 10) - 5}deg)`;
-      
       img.addEventListener('click', () => {
         document.getElementById('lightbox-img').src = img.src;
         document.getElementById('lightbox').style.display = 'flex';
       });
-
       gallery.appendChild(img);
-
-      // Remove from darkroom, free it up for the next photo from the pile
-      activePrint.style.display = 'none';
-      hangBtn.style.display = 'none';
-      
-      views.darkroom.style.display = 'none';
-      views.clothesline.style.display = 'flex';
+      activePrint.style.display = 'none'; hangBtn.style.display = 'none';
+      views.darkroom.style.display = 'none'; views.clothesline.style.display = 'flex';
     });
 
     document.getElementById('close-lightbox').addEventListener('click', () => {
