@@ -8,24 +8,47 @@
     /* BASE STYLES */
     body, html { 
       margin: 0; padding: 0; height: 100%; 
-      background: #111; font-family: sans-serif; 
+      background: #000; font-family: sans-serif; 
       color: #fff; overflow: hidden; 
+      touch-action: none; 
     }
     
-    /* 1. CAMERA VIEW UI */
+    /* 1. CAMERA VIEW UI (The "Camera Back") */
     #camera-view { 
-      display: flex; flex-direction: column; 
+      display: flex; flex-direction: column; justify-content: space-between;
       height: 100%; padding: 20px; box-sizing: border-box; 
+      /* Simulated vintage camera leatherette texture */
+      background-color: #1c1c1c;
+      background-image: radial-gradient(#2b2b2b 15%, transparent 16%), radial-gradient(#2b2b2b 15%, transparent 16%);
+      background-size: 4px 4px;
+      background-position: 0 0, 2px 2px;
+      border: 8px solid #333; /* The metal camera body edge */
+      border-radius: 12px;
     }
     
+    /* The tiny square viewfinder */
+    .viewfinder-container {
+      width: 120px; 
+      height: 120px; 
+      margin: 10px auto 30px auto; /* Centers it near the top */
+      border: 6px solid #111; 
+      border-radius: 4px;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 2px 0 rgba(255,255,255,0.1);
+      overflow: hidden;
+      background: #000;
+      position: relative;
+    }
     #viewfinder { 
-      flex: 1; width: 100%; background: #000; 
-      border: 4px solid #333; border-radius: 8px; 
-      margin-bottom: 20px; object-fit: cover; 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
     }
 
     .controls { 
-      display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; 
+      display: flex; flex-direction: column; gap: 20px; 
+      background: #222; padding: 15px; border-radius: 8px;
+      border: 2px solid #111; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+      margin-bottom: auto;
     }
     .control-group { 
       display: flex; justify-content: space-between; align-items: center; 
@@ -33,15 +56,27 @@
     input[type="range"] { 
       flex: 1; margin-left: 15px; 
     }
+    
     .actions { 
-      display: flex; justify-content: space-between; gap: 10px; 
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
+      margin-top: 20px;
     }
     button { 
-      padding: 15px; font-size: 16px; border: none; 
+      padding: 15px; font-size: 15px; border: none; 
       border-radius: 8px; cursor: pointer; font-weight: bold; 
+      box-shadow: 0 4px 0 #111;
+      transition: all 0.1s;
     }
-    #shutter-btn { flex: 2; background: #ff4444; color: white; }
-    #darkroom-btn { flex: 1; background: #444; color: white; }
+    button:active:not(:disabled) {
+      transform: translateY(4px); box-shadow: 0 0 0 #111;
+    }
+    button:disabled {
+      opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 #000;
+    }
+
+    #shutter-btn { background: #ff4444; color: white; }
+    #wind-btn { background: #b0b0b0; color: #111; }
+    #darkroom-btn { grid-column: span 2; background: #444; color: white; margin-top: 10px; }
 
     /* 2. DARKROOM VIEW UI */
     #darkroom-view { 
@@ -56,28 +91,28 @@
       box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 8px #d3d3d3; 
       display: flex; align-items: center; justify-content: center; 
       color: #555; font-weight: bold; font-size: 1.5rem;
-      position: relative; /* Allows absolute positioning inside */
+      position: relative;
     }
     .tray-label {
       position: absolute; pointer-events: none;
     }
     
-    /* The Developing Photo */
     #developed-photo {
       width: 80%; height: 80%; 
       object-fit: cover; 
-      border: 6px solid #e0e0e0; /* Photographic paper border */
+      border: 6px solid #e0e0e0; 
       border-radius: 2px;
-      /* Black and white print style */
       filter: grayscale(100%) contrast(1.3) sepia(20%); 
-      opacity: 0; /* Hidden initially */
-      transition: opacity 8s ease-in-out; /* Slow 8-second fade-in */
+      opacity: 0; 
+      transition: opacity 8s ease-in-out; 
       z-index: 5;
-      display: none; /* Hidden until a photo is taken */
+      display: none; 
+      cursor: grab;
+      touch-action: none; 
+      position: absolute; 
     }
-    #developed-photo.developing {
-      opacity: 1; /* Triggers the fade-in */
-    }
+    #developed-photo:active { cursor: grabbing; }
+    #developed-photo.developing { opacity: 1; }
 
     .safelight-overlay { 
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -94,9 +129,10 @@
 
   <!-- CAMERA HTML -->
   <div id="camera-view">
-    <video id="viewfinder" autoplay playsinline></video>
+    <div class="viewfinder-container">
+      <video id="viewfinder" autoplay playsinline></video>
+    </div>
     
-    <!-- Hidden canvas used to grab the video frame -->
     <canvas id="capture-canvas" style="display: none;"></canvas>
     
     <div class="controls">
@@ -111,19 +147,20 @@
     </div>
 
     <div class="actions">
-      <button id="shutter-btn">SHUTTER</button>
-      <button id="darkroom-btn">DARKROOM</button>
+      <button id="shutter-btn">SNAP PHOTO</button>
+      <button id="wind-btn" disabled>WIND FILM</button>
+      <button id="darkroom-btn">ENTER DARKROOM</button>
     </div>
   </div>
 
   <!-- DARKROOM HTML -->
   <div id="darkroom-view">
-    <div class="tray developer">
+    <div class="tray developer" id="tray-dev">
       <div class="tray-label">Developer</div>
-      <img id="developed-photo" src="" alt="Developing print">
+      <img id="developed-photo" src="" alt="Developing print" draggable="false">
     </div>
-    <div class="tray stop-bath"><div class="tray-label">Stop Bath</div></div>
-    <div class="tray fixer"><div class="tray-label">Fixer</div></div>
+    <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop Bath</div></div>
+    <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
     
     <div class="safelight-overlay"></div>
     <button id="exit-darkroom-btn">Leave Darkroom</button>
@@ -131,31 +168,34 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // 1. Audio Setup
+    // Audio Setup
     const shutterSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2299/2299-preview.mp3'); 
     const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2626/2626-preview.mp3'); 
     const dialClickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'); 
     dialClickSound.volume = 0.4;
 
-    // 2. DOM Elements
+    // DOM Elements
     const cameraView = document.getElementById('camera-view');
     const darkroomView = document.getElementById('darkroom-view');
     const shutterBtn = document.getElementById('shutter-btn');
+    const windBtn = document.getElementById('wind-btn');
     const darkroomBtn = document.getElementById('darkroom-btn');
     const exitDarkroomBtn = document.getElementById('exit-darkroom-btn');
     const dials = document.querySelectorAll('.manual-dial');
     const viewfinder = document.getElementById('viewfinder');
     
-    // Elements for capturing the photo
     const captureCanvas = document.getElementById('capture-canvas');
     const ctx = captureCanvas.getContext('2d');
     const developedPhoto = document.getElementById('developed-photo');
+    const devTray = document.getElementById('tray-dev');
     
     let photoCaptured = false;
+    let isFilmWound = true; // Tracks if the camera is ready to fire
 
-    // 3. Initialize Camera Feed
+    // Camera Feed
     async function startCamera() {
       try {
+        // We ensure we grab the rear camera
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         viewfinder.srcObject = stream;
       } catch (err) {
@@ -164,38 +204,50 @@
     }
     startCamera();
 
-    // 4. Shutter: Capture Photo + Sound + Haptics
+    // 1. Shutter: Capture Photo
     shutterBtn.addEventListener('click', () => {
-      // Audio & Haptics
+      if (!isFilmWound) return; // Failsafe
+
       shutterSound.currentTime = 0;
       shutterSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate(100);
 
-      // --- CAPTURE THE PHOTO ---
-      // Match canvas size to the video feed resolution
+      // Capture Image
       captureCanvas.width = viewfinder.videoWidth;
       captureCanvas.height = viewfinder.videoHeight;
-      
-      // Draw the current video frame onto the canvas
       ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height);
       
-      // Convert canvas to an image URL and place it in the img tag
       developedPhoto.src = captureCanvas.toDataURL('image/jpeg');
       developedPhoto.style.display = 'block';
       
-      // Reset the fade-in effect in case they take multiple photos
+      devTray.appendChild(developedPhoto);
+      xOffset = 0; yOffset = 0; 
+      setTranslate(0, 0, developedPhoto);
+
       developedPhoto.classList.remove('developing');
       photoCaptured = true;
 
-      // Wind sound delay
-      setTimeout(() => {
-        filmWindSound.currentTime = 0;
-        filmWindSound.play().catch(e => {});
-        if (navigator.vibrate) navigator.vibrate([30, 40, 30, 40]);
-      }, 600);
+      // Lock shutter, require winding
+      isFilmWound = false;
+      shutterBtn.disabled = true;
+      windBtn.disabled = false;
     });
 
-    // 5. Manual Dials
+    // 2. Winder: Advance Film
+    windBtn.addEventListener('click', () => {
+      if (isFilmWound) return; // Failsafe
+
+      filmWindSound.currentTime = 0;
+      filmWindSound.play().catch(e => {});
+      if (navigator.vibrate) navigator.vibrate([30, 40, 30, 40]);
+
+      // Re-arm shutter
+      isFilmWound = true;
+      windBtn.disabled = true;
+      shutterBtn.disabled = false;
+    });
+
+    // Dials
     dials.forEach(dial => {
       dial.addEventListener('input', () => {
         dialClickSound.currentTime = 0;
@@ -204,16 +256,13 @@
       });
     });
 
-    // 6. Enter Darkroom: Start Developing Process
+    // Enter Darkroom
     darkroomBtn.addEventListener('click', () => {
       cameraView.style.display = 'none';
       darkroomView.style.display = 'grid';
 
-      // Start the CSS fade-in transition if a photo was taken
       if (photoCaptured) {
-        setTimeout(() => {
-          developedPhoto.classList.add('developing');
-        }, 500); // Wait half a second before the image starts appearing
+        setTimeout(() => developedPhoto.classList.add('developing'), 500); 
       }
 
       document.documentElement.requestFullscreen().then(() => {
@@ -221,15 +270,70 @@
       }).catch(err => console.log(err));
     });
 
-    // 7. Leave Darkroom
+    // Leave Darkroom
     exitDarkroomBtn.addEventListener('click', () => {
       darkroomView.style.display = 'none';
       cameraView.style.display = 'flex';
-      
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(err => console.log(err));
       }
     });
+
+    // Drag and Drop Logic
+    let isDragging = false;
+    let currentX, currentY, initialX, initialY;
+    let xOffset = 0, yOffset = 0;
+
+    developedPhoto.addEventListener("pointerdown", dragStart, false);
+    document.addEventListener("pointerup", dragEnd, false);
+    document.addEventListener("pointermove", drag, false);
+
+    function dragStart(e) {
+      initialX = e.clientX - xOffset;
+      initialY = e.clientY - yOffset;
+      if (e.target === developedPhoto) {
+        isDragging = true;
+        developedPhoto.style.zIndex = 100; 
+      }
+    }
+
+    function drag(e) {
+      if (isDragging) {
+        e.preventDefault();
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        xOffset = currentX;
+        yOffset = currentY;
+        setTranslate(currentX, currentY, developedPhoto);
+      }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    }
+
+    function dragEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      developedPhoto.style.zIndex = 5;
+
+      developedPhoto.style.visibility = 'hidden';
+      const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+      developedPhoto.style.visibility = 'visible';
+
+      if (dropTarget) {
+        const tray = dropTarget.closest('.tray');
+        if (tray) {
+          if (navigator.vibrate) navigator.vibrate(20);
+          tray.appendChild(developedPhoto);
+          xOffset = 0; yOffset = 0;
+          setTranslate(0, 0, developedPhoto);
+        } else {
+          xOffset = 0; yOffset = 0;
+          setTranslate(0, 0, developedPhoto);
+        }
+      }
+    }
   </script>
 </body>
 </html>
