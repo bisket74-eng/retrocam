@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- user-scalable=no prevents the whole page from zooming, we handle pinch-to-zoom manually -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Retro SLR Camera</title>
   <style>
@@ -11,6 +12,19 @@
       color: #fff; overflow: hidden; touch-action: none; 
     }
     
+    /* FULLSCREEN START SCREEN */
+    #start-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #111; z-index: 10000; display: flex; 
+      flex-direction: column; justify-content: center; align-items: center;
+    }
+    #start-btn {
+      padding: 20px 40px; font-size: 1.5rem; font-weight: bold; font-family: monospace;
+      background: #ff4444; color: white; border: 4px solid #fff; border-radius: 8px; cursor: pointer;
+      box-shadow: 0 8px 0 #992222;
+    }
+    #start-btn:active { transform: translateY(8px); box-shadow: 0 0 0 #992222; }
+
     #rotate-warning {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: #000; z-index: 9999; color: white; align-items: center; justify-content: center;
@@ -22,60 +36,44 @@
     }
     #app-container { height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #222;}
 
-    /* =========================================
-       1. SLR CAMERA BODY
-       ========================================= */
+    /* 1. SLR CAMERA BODY */
     #camera-view { 
       display: flex; flex-direction: column;
       width: 100%; height: 100%; max-width: 900px;
-      box-sizing: border-box; 
-      border: 6px solid #111; border-radius: 8px;
-      position: relative;
+      box-sizing: border-box; border: 6px solid #111; border-radius: 8px; position: relative;
     }
 
-    /* THE SILVER TOP PLATE */
     .top-plate {
-      height: 100px;
-      background: linear-gradient(to bottom, #f0f0f0, #c0c0c0, #999);
-      border-bottom: 3px solid #111;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 10px 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8);
-      position: relative; z-index: 2;
+      height: 100px; background: linear-gradient(to bottom, #f0f0f0, #c0c0c0, #999);
+      border-bottom: 3px solid #111; display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 10px 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8); position: relative; z-index: 2;
     }
 
-    /* Left: Dials */
     .top-left-controls { display: flex; gap: 10px; margin-top: 15px; }
     .tiny-dial {
-      width: 35px; height: 35px; background: #222; 
-      border: 3px solid #111; border-radius: 50%;
+      width: 35px; height: 35px; background: #222; border: 3px solid #111; border-radius: 50%;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 0 0 5px #555;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.5rem; font-weight: bold; color: #aaa;
       background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #333 2px, #333 4px);
     }
 
-    /* Center: SLR Viewfinder Hump */
     .viewfinder-hump {
       position: absolute; left: 50%; transform: translateX(-50%); top: 10px;
       background: #111; padding: 8px 15px; border-radius: 4px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.6);
-      border: 2px solid #333;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.6); border: 2px solid #333;
     }
     .viewfinder-square {
-      width: 60px; height: 40px; /* Tiny SLR window */
-      border: 4px solid #000; border-radius: 2px;
+      width: 60px; height: 40px; border: 4px solid #000; border-radius: 2px;
       background: #000; overflow: hidden;
     }
     #viewfinder { width: 100%; height: 100%; object-fit: cover; }
 
-    /* Right: Shutter & Counter */
     .top-right-controls { display: flex; gap: 15px; align-items: center; margin-top: 10px;}
     
     .film-counter-window {
-      width: 30px; height: 30px; background: #111;
-      border: 2px solid #555; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #ff3333; font-size: 0.9rem; font-weight: bold; font-family: monospace;
+      width: 30px; height: 30px; background: #111; border: 2px solid #555; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: #ff3333; font-size: 0.9rem; font-weight: bold; font-family: monospace;
       box-shadow: inset 0 2px 5px #000;
     }
 
@@ -87,42 +85,31 @@
     #shutter-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #333; }
     #shutter-btn:disabled { filter: brightness(0.5); transform: none; box-shadow: 0 4px 0 #333; }
 
-    /* THE BLACK BACK DOOR */
     .back-door {
-      flex: 1;
-      background-color: #1a1a1a;
+      flex: 1; background-color: #1a1a1a;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 0h4v4H0V0zm4 4h4v4H4V4z' fill='%23111111' fill-opacity='0.6'/%3E%3C/svg%3E");
       position: relative;
     }
 
-    /* Thumb Winder on the right edge */
-    .winder-area {
-      position: absolute; right: 20px; top: 20px;
-      display: flex; flex-direction: column; align-items: center;
-    }
+    .winder-area { position: absolute; right: 20px; top: 20px; display: flex; flex-direction: column; align-items: center; }
     .winder-container {
       width: 80px; height: 40px; background: #0a0a0a;
-      border: 3px solid #222; border-radius: 4px; overflow: hidden; position: relative; 
-      box-shadow: inset 0 0 10px #000;
+      border: 3px solid #222; border-radius: 4px; overflow: hidden; position: relative; box-shadow: inset 0 0 10px #000;
     }
     #winder-wheel {
-      width: 200%; height: 100%;
-      background: repeating-linear-gradient(to right, #444, #444 4px, #111 4px, #111 8px);
+      width: 200%; height: 100%; background: repeating-linear-gradient(to right, #444, #444 4px, #111 4px, #111 8px);
       position: absolute; left: 0; top: 0;
     }
     .winder-label { font-size: 0.6rem; color: #888; margin-top: 5px; font-family: sans-serif;}
 
-    /* Darkroom Latch */
     #darkroom-btn { 
       position: absolute; left: 20px; bottom: 20px;
       background: #2a2a2a; color: #aaa; border: 2px solid #111;
       padding: 10px 15px; font-size: 0.7rem; font-weight: bold; border-radius: 2px; 
-      box-shadow: 2px 2px 5px #000; text-transform: uppercase;
+      box-shadow: 2px 2px 5px #000; text-transform: uppercase; cursor: pointer;
     }
 
-    /* =========================================
-       2. DARKROOM VIEW & TIMERS (Hidden initially)
-       ========================================= */
+    /* 2. DARKROOM VIEW */
     #darkroom-view { 
       display: none; grid-template-columns: repeat(3, 1fr); gap: 15px; 
       padding: 15px; height: 100%; width: 100%; background-color: #1a1a1a; position: relative; box-sizing: border-box; 
@@ -130,25 +117,20 @@
     
     #undeveloped-pile {
       position: absolute; top: 15px; right: 15px; width: 60px; height: 60px;
-      background: #333; border: 2px solid #555; border-radius: 4px;
-      display: flex; align-items: center; justify-content: center; z-index: 20;
+      background: #333; border: 2px solid #555; border-radius: 4px; display: flex; align-items: center; justify-content: center; z-index: 20;
       text-align: center; font-size: 0.8rem; cursor: pointer; box-shadow: 2px 2px 10px #000;
     }
 
     .tray { 
-      background-color: #2a2a2a; border-radius: 12px; 
-      box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 6px #d3d3d3; 
-      display: flex; align-items: center; justify-content: center; 
-      color: #555; font-weight: bold; font-size: 1.2rem; position: relative;
+      background-color: #2a2a2a; border-radius: 12px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 6px #d3d3d3; 
+      display: flex; align-items: center; justify-content: center; color: #555; font-weight: bold; font-size: 1.2rem; position: relative;
     }
     .tray-label { position: absolute; pointer-events: none; }
     
     #active-print {
       width: 70%; height: auto; aspect-ratio: 4/3; object-fit: cover; 
-      border: 6px solid #e0e0e0; border-radius: 2px;
-      filter: grayscale(100%) contrast(1.3) sepia(20%); 
-      opacity: 0; z-index: 5; display: none; cursor: grab; touch-action: none; position: absolute; 
-      transition: opacity 1s;
+      border: 6px solid #e0e0e0; border-radius: 2px; filter: grayscale(100%) contrast(1.3) sepia(20%); 
+      opacity: 0; z-index: 5; display: none; cursor: grab; touch-action: none; position: absolute; transition: opacity 1s;
     }
     #active-print:active { cursor: grabbing; }
 
@@ -164,49 +146,59 @@
     .dev-stage-3 { opacity: 1.0 !important; } 
 
     .safelight-overlay { 
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-      background-color: red; mix-blend-mode: multiply; pointer-events: none; opacity: 0.85; z-index: 10; 
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: red; mix-blend-mode: multiply; pointer-events: none; opacity: 0.85; z-index: 10; 
     }
     
     .darkroom-actions {
-      position: absolute; bottom: 15px; left: 0; width: 100%;
-      display: flex; justify-content: center; gap: 20px; z-index: 20;
+      position: absolute; bottom: 15px; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 20;
     }
     .dr-btn { padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
     #exit-darkroom-btn { background: #fff; color: #000; }
     #hang-btn { background: #4CAF50; color: white; display: none; }
     #view-clothesline-btn { background: #2196F3; color: white; }
 
-    /* =========================================
-       3. CLOTHESLINE VIEW
-       ========================================= */
+    /* 3. CLOTHESLINE VIEW */
     #clothesline-view {
-      display: none; width: 100%; height: 100%; padding: 20px; box-sizing: border-box;
-      background: #2c2c2c; flex-direction: column; position: relative;
+      display: none; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; background: #2c2c2c; flex-direction: column; position: relative;
     }
     .wire {
-      position: absolute; top: 80px; left: 0; width: 100%; height: 4px;
-      background: #555; box-shadow: 0 5px 10px rgba(0,0,0,0.5); z-index: 1;
+      position: absolute; top: 80px; left: 0; width: 100%; height: 4px; background: #555; box-shadow: 0 5px 10px rgba(0,0,0,0.5); z-index: 1;
     }
     #gallery {
       display: flex; gap: 20px; overflow-x: auto; padding-top: 40px; z-index: 2; height: 100%;
     }
     .hung-photo {
-      height: 150px; border: 8px solid #eee; border-radius: 2px;
-      filter: grayscale(100%) contrast(1.3) sepia(20%);
+      height: 150px; border: 8px solid #eee; border-radius: 2px; filter: grayscale(100%) contrast(1.3) sepia(20%);
       box-shadow: 3px 5px 15px rgba(0,0,0,0.6); transform-origin: top center; cursor: pointer;
     }
-    #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #fff; color: #000; border: none; padding: 10px; z-index: 10;}
+    #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight:bold; z-index: 10;}
 
+    /* 4. LIGHTBOX & ZOOM */
     #lightbox {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.95); z-index: 100; align-items: center; justify-content: center; flex-direction: column;
     }
-    #lightbox img { max-width: 90%; max-height: 90%; border: 15px solid #eee; filter: grayscale(100%) contrast(1.3) sepia(20%);}
-    #close-lightbox { position: absolute; top: 20px; right: 20px; background: #ff4444; color: #fff; border: none; padding: 10px;}
+    /* container handles the zooming transforms so the UI buttons don't scale */
+    #lightbox-zoom-container {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.1s ease-out; transform-origin: center;
+    }
+    #lightbox img { max-width: 90%; max-height: 80%; border: 15px solid #eee; filter: grayscale(100%) contrast(1.3) sepia(20%); pointer-events: none;}
+    
+    .lightbox-ui {
+      position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 105;
+    }
+    #share-btn { background: #4CAF50; color: #fff; border: none; padding: 15px 25px; border-radius: 4px; font-weight: bold; cursor: pointer;}
+    #close-lightbox { background: #ff4444; color: #fff; border: none; padding: 15px 25px; border-radius: 4px; font-weight: bold; cursor: pointer;}
   </style>
 </head>
 <body>
+
+  <!-- START OVERLAY (Requires tap to enter fullscreen and hide address bar) -->
+  <div id="start-screen">
+    <button id="start-btn">TURN ON CAMERA</button>
+    <p style="color:#666; margin-top:20px;">(Please hold phone sideways)</p>
+  </div>
 
   <div id="rotate-warning">Rotate phone sideways.</div>
 
@@ -214,53 +206,40 @@
     
     <!-- CAMERA HTML -->
     <div id="camera-view">
-      
-      <!-- TOP CHROME PLATE -->
       <div class="top-plate">
         <div class="top-left-controls">
           <div class="tiny-dial">ISO</div>
           <div class="tiny-dial">FOC</div>
         </div>
-        
         <div class="viewfinder-hump">
           <div class="viewfinder-square">
             <video id="viewfinder" autoplay playsinline></video>
           </div>
         </div>
-
         <div class="top-right-controls">
           <div class="film-counter-window"><span id="counter-text">12</span></div>
           <button id="shutter-btn" disabled></button>
         </div>
       </div>
-
-      <!-- BLACK TEXTURED BACK DOOR -->
       <div class="back-door">
-        
         <div class="winder-area">
           <div class="winder-container" id="winder-hitbox">
             <div id="winder-wheel"></div>
           </div>
           <div class="winder-label">SWIPE</div>
         </div>
-
         <button id="darkroom-btn">OPEN BACK</button>
       </div>
-
       <canvas id="capture-canvas" style="display: none;"></canvas>
     </div>
 
     <!-- DARKROOM HTML -->
     <div id="darkroom-view">
       <div id="undeveloped-pile">FILM<br>(0)</div>
-      <div class="tray developer" id="tray-dev">
-        <div class="tray-label">Developer</div>
-        <img id="active-print" class="dev-stage-0" src="" draggable="false">
-      </div>
+      <div class="tray developer" id="tray-dev"><div class="tray-label">Developer</div><img id="active-print" class="dev-stage-0" src="" draggable="false"></div>
       <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop</div></div>
       <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
       <div class="safelight-overlay"></div>
-      
       <div class="darkroom-actions">
         <button class="dr-btn" id="exit-darkroom-btn">Camera</button>
         <button class="dr-btn" id="hang-btn">HANG PHOTO</button>
@@ -275,18 +254,29 @@
       <button id="back-to-darkroom-btn">Back</button>
     </div>
 
+    <!-- LIGHTBOX HTML -->
     <div id="lightbox">
-      <button id="close-lightbox">CLOSE</button>
-      <img id="lightbox-img" src="">
+      <div class="lightbox-ui">
+        <button id="close-lightbox">CLOSE</button>
+        <button id="share-btn">SHARE / PRINT</button>
+      </div>
+      <!-- This container handles the zooming -->
+      <div id="lightbox-zoom-container">
+        <img id="lightbox-img" src="">
+      </div>
     </div>
 
   </div>
 
   <script>
-    const shutterSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2299/2299-preview.mp3'); 
-    const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3'); 
-    filmWindSound.volume = 0.5;
+    // --- AUDIO ---
+    // If you want exact sounds, replace these URLs with local files (e.g., 'shutter.mp3') inside your github repo.
+    const shutterSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2283/2283-preview.mp3'); // Heavy mechanical click
+    const filmWindSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'); // Harder crank noise
+    filmWindSound.volume = 0.6;
 
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen');
     const views = {
       camera: document.getElementById('camera-view'),
       darkroom: document.getElementById('darkroom-view'),
@@ -304,28 +294,44 @@
     const viewfinder = document.getElementById('viewfinder');
     const captureCanvas = document.getElementById('capture-canvas');
     const ctx = captureCanvas.getContext('2d');
+    
+    // Lightbox & Zoom Elements
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const zoomContainer = document.getElementById('lightbox-zoom-container');
 
     const MAX_SHOTS = 12;
     let shotsRemaining = MAX_SHOTS;
     let isFilmWound = false; 
     let filmRoll = []; 
 
+    // --- FULLSCREEN & CAMERA START ---
+    startScreen.addEventListener('click', async () => {
+      startScreen.style.display = 'none';
+      
+      // Request Fullscreen (Hides Address Bar)
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      }
+      // Force Landscape Lock
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(err => console.log(err));
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        viewfinder.srcObject = stream;
+      } catch (err) { console.log(err); }
+    });
+
+    // --- VIEW ROUTING ---
     document.getElementById('darkroom-btn').addEventListener('click', () => { views.camera.style.display = 'none'; views.darkroom.style.display = 'grid'; });
     document.getElementById('exit-darkroom-btn').addEventListener('click', () => { views.darkroom.style.display = 'none'; views.camera.style.display = 'flex'; });
     document.getElementById('view-clothesline-btn').addEventListener('click', () => { views.darkroom.style.display = 'none'; views.clothesline.style.display = 'flex'; });
     document.getElementById('back-to-darkroom-btn').addEventListener('click', () => { views.clothesline.style.display = 'none'; views.darkroom.style.display = 'grid'; });
 
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        viewfinder.srcObject = stream;
-      } catch (err) { console.log(err); }
-    }
-    startCamera();
-
-    let swipeStartX = 0;
-    let swipeDistance = 0;
-
+    // --- WINDER MECHANIC ---
+    let swipeStartX = 0; let swipeDistance = 0;
     winderHitbox.addEventListener('pointerdown', e => { swipeStartX = e.clientX; });
     winderHitbox.addEventListener('pointermove', e => {
       if (!swipeStartX || isFilmWound || shotsRemaining === 0) return;
@@ -335,8 +341,7 @@
         swipeStartX = e.clientX; 
         winderWheel.style.transform = `translateX(${-swipeDistance % 20}px)`;
         if (swipeDistance % 20 < 5) {
-            filmWindSound.currentTime = 0;
-            filmWindSound.play().catch(()=>{});
+            filmWindSound.currentTime = 0; filmWindSound.play().catch(()=>{});
             if(navigator.vibrate) navigator.vibrate(10);
         }
         if (swipeDistance > 150) {
@@ -348,39 +353,32 @@
     });
     winderHitbox.addEventListener('pointerup', () => { swipeStartX = 0; });
 
+    // --- SHUTTER SNAP ---
     shutterBtn.addEventListener('click', () => {
       if (!isFilmWound || shotsRemaining === 0) return; 
-      shutterSound.currentTime = 0;
-      shutterSound.play().catch(e => {});
+      shutterSound.currentTime = 0; shutterSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate(100);
 
-      captureCanvas.width = viewfinder.videoWidth;
-      captureCanvas.height = viewfinder.videoHeight;
+      captureCanvas.width = viewfinder.videoWidth; captureCanvas.height = viewfinder.videoHeight;
       ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height);
       
       filmRoll.push(captureCanvas.toDataURL('image/jpeg'));
-      shotsRemaining--;
-      counterText.innerText = shotsRemaining;
+      shotsRemaining--; counterText.innerText = shotsRemaining;
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
 
       isFilmWound = false; shutterBtn.disabled = true;
     });
 
-    let isPhotoProcessing = false;
-    let currentTrayId = '';
-
+    // --- DARKROOM ---
+    let isPhotoProcessing = false; let currentTrayId = '';
     undevelopedPile.addEventListener('click', () => {
       if (filmRoll.length === 0) return;
       if (activePrint.style.display === 'block') { alert("Finish developing the current photo first!"); return; }
 
       const photoData = filmRoll.shift(); 
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
-      activePrint.src = photoData;
-      activePrint.style.display = 'block';
-      activePrint.className = ''; 
-      devTray.appendChild(activePrint);
-      setTranslate(0, 0, activePrint);
-      triggerBathTimer('tray-dev');
+      activePrint.src = photoData; activePrint.style.display = 'block'; activePrint.className = ''; 
+      devTray.appendChild(activePrint); setTranslate(0, 0, activePrint); triggerBathTimer('tray-dev');
     });
 
     function triggerBathTimer(trayId) {
@@ -397,51 +395,42 @@
       }, 3000); 
     }
 
-    let isDragging = false;
-    let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
-
+    let isDragging = false; let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
     activePrint.addEventListener("pointerdown", e => {
       if (isPhotoProcessing) return; 
       initialX = e.clientX - xOffset; initialY = e.clientY - yOffset;
       isDragging = true; activePrint.style.zIndex = 100;
     });
-
     document.addEventListener("pointermove", e => {
       if (isDragging) {
         e.preventDefault();
         currentX = e.clientX - initialX; currentY = e.clientY - initialY;
-        xOffset = currentX; yOffset = currentY;
-        setTranslate(currentX, currentY, activePrint);
+        xOffset = currentX; yOffset = currentY; setTranslate(currentX, currentY, activePrint);
       }
     });
-
     function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
-
     document.addEventListener("pointerup", e => {
       if (!isDragging) return;
       isDragging = false; activePrint.style.zIndex = 5;
-      activePrint.style.visibility = 'hidden';
-      const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
-      activePrint.style.visibility = 'visible';
-
+      activePrint.style.visibility = 'hidden'; const dropTarget = document.elementFromPoint(e.clientX, e.clientY); activePrint.style.visibility = 'visible';
       if (dropTarget) {
         const tray = dropTarget.closest('.tray');
         if (tray && tray.id !== currentTrayId) {
-          tray.appendChild(activePrint); xOffset = 0; yOffset = 0;
-          setTranslate(0, 0, activePrint); triggerBathTimer(tray.id); 
-        } else {
-          xOffset = 0; yOffset = 0; setTranslate(0, 0, activePrint);
-        }
+          tray.appendChild(activePrint); xOffset = 0; yOffset = 0; setTranslate(0, 0, activePrint); triggerBathTimer(tray.id); 
+        } else { xOffset = 0; yOffset = 0; setTranslate(0, 0, activePrint); }
       }
     });
 
+    // --- HANG PHOTO & LIGHTBOX ---
     hangBtn.addEventListener('click', () => {
       const img = document.createElement('img');
       img.src = activePrint.src; img.className = 'hung-photo';
       img.style.transform = `rotate(${(Math.random() * 10) - 5}deg)`;
       img.addEventListener('click', () => {
-        document.getElementById('lightbox-img').src = img.src;
-        document.getElementById('lightbox').style.display = 'flex';
+        lightboxImg.src = img.src;
+        lightbox.style.display = 'flex';
+        // Reset Zoom
+        currentScale = 1; zoomContainer.style.transform = `scale(1)`;
       });
       gallery.appendChild(img);
       activePrint.style.display = 'none'; hangBtn.style.display = 'none';
@@ -449,7 +438,69 @@
     });
 
     document.getElementById('close-lightbox').addEventListener('click', () => {
-      document.getElementById('lightbox').style.display = 'none';
+      lightbox.style.display = 'none';
+    });
+
+    // --- SHARE / PRINT API ---
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      try {
+        const dataUrl = lightboxImg.src;
+        // Convert base64 to file to trigger native share sheets (iOS/Android)
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], 'darkroom-print.jpg', { type: 'image/jpeg' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'My Retro Photo' });
+        } else {
+          // Fallback if sharing is not supported (desktop/old browser)
+          const newWindow = window.open();
+          newWindow.document.write(`<img src="${dataUrl}" style="width:100%;"><script>window.print();<\/script>`);
+        }
+      } catch (err) { console.error("Share failed", err); }
+    });
+
+    // --- PINCH TO ZOOM (Multi-touch) ---
+    let initialDistance = null;
+    let currentScale = 1;
+
+    lightbox.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        initialDistance = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+      }
+    });
+
+    lightbox.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && initialDistance) {
+        e.preventDefault(); // Stop screen from scrolling
+        const currentDistance = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+        
+        // Calculate new scale based on pinch spread
+        let scaleFactor = currentDistance / initialDistance;
+        let newScale = currentScale * scaleFactor;
+        
+        // Lock zoom between 1x and 4x size
+        newScale = Math.min(Math.max(1, newScale), 4);
+        zoomContainer.style.transform = `scale(${newScale})`;
+      }
+    });
+
+    lightbox.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        initialDistance = null;
+        // Save the scale where they let go
+        const transformStr = zoomContainer.style.transform;
+        if (transformStr.includes('scale')) {
+           const match = transformStr.match(/scale\(([^)]+)\)/);
+           if(match) currentScale = parseFloat(match[1]);
+        }
+      }
     });
   </script>
 </body>
