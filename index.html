@@ -35,59 +35,60 @@
     }
     #app-container { height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #222;}
 
-    /* 1. SLR CAMERA BODY */
+    /* =========================================
+       1. SLR CAMERA BODY
+       ========================================= */
     #camera-view { 
-      display: flex; flex-direction: column; width: 100%; height: 100%; max-width: 900px;
+      display: flex; flex-direction: column; width: 100%; height: 100%; max-width: 1000px;
       box-sizing: border-box; border: 6px solid #111; border-radius: 8px; position: relative;
     }
 
     .top-plate {
-      height: 100px; background: linear-gradient(to bottom, #f0f0f0, #c0c0c0, #999);
+      min-height: 120px; background: linear-gradient(to bottom, #f0f0f0, #c0c0c0, #999);
       border-bottom: 3px solid #111; display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 10px 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8); position: relative; z-index: 2;
+      padding: 15px 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8); position: relative; z-index: 2;
     }
 
-    .top-left-controls { display: flex; gap: 8px; margin-top: 15px; }
+    .top-left-controls { display: flex; gap: 12px; margin-top: 10px; }
     .tiny-dial {
-      width: 40px; height: 40px; background: #222; border: 3px solid #111; border-radius: 50%;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.5), inset 0 0 5px #555; cursor: pointer;
+      width: 55px; height: 55px; background: #222; border: 3px solid #111; border-radius: 50%;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.6), inset 0 0 5px #555; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.6rem; font-weight: bold; color: #fff;
+      font-size: 0.8rem; font-weight: bold; color: #fff;
       background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #333 2px, #333 4px);
       transition: transform 0.1s;
     }
     .tiny-dial:active { transform: rotate(15deg); }
 
     .viewfinder-hump {
-      position: absolute; left: 50%; transform: translateX(-50%); top: 10px;
-      background: #111; padding: 8px 15px; border-radius: 4px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.6); border: 2px solid #333;
+      position: absolute; left: 50%; transform: translateX(-50%); top: 15px;
+      background: #111; padding: 10px 18px; border-radius: 4px;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.6); border: 2px solid #333;
     }
     .viewfinder-square {
-      width: 60px; height: 40px; border: 4px solid #000; border-radius: 2px;
+      width: 90px; height: 60px; border: 5px solid #000; border-radius: 2px;
       background: #000; overflow: hidden; position: relative;
     }
     
-    /* Viewfinder video is scaled for zoom, transition makes it smooth */
     #viewfinder { 
       width: 100%; height: 100%; object-fit: cover; 
       transition: transform 0.2s ease, filter 0.2s ease; 
     }
 
-    .top-right-controls { display: flex; gap: 15px; align-items: center; margin-top: 10px;}
+    .top-right-controls { display: flex; gap: 20px; align-items: center; margin-top: 5px;}
     
     .film-counter-window {
-      width: 30px; height: 30px; background: #111; border: 2px solid #555; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; color: #ff3333; font-size: 0.9rem; font-weight: bold; font-family: monospace;
+      width: 35px; height: 35px; background: #111; border: 2px solid #555; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: #ff3333; font-size: 1.1rem; font-weight: bold; font-family: monospace;
       box-shadow: inset 0 2px 5px #000;
     }
 
     #shutter-btn { 
-      width: 45px; height: 45px; background: linear-gradient(to bottom, #dcdcdc, #888); border: 2px solid #111; border-radius: 50%;
-      box-shadow: 0 4px 0 #333, inset 0 2px 5px #fff; cursor: pointer; transition: all 0.1s;
+      width: 70px; height: 70px; background: linear-gradient(to bottom, #dcdcdc, #888); border: 3px solid #111; border-radius: 50%;
+      box-shadow: 0 6px 0 #333, inset 0 2px 5px #fff; cursor: pointer; transition: all 0.1s;
     }
-    #shutter-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #333; }
-    #shutter-btn:disabled { filter: brightness(0.5); transform: none; box-shadow: 0 4px 0 #333; }
+    #shutter-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 #333; }
+    #shutter-btn:disabled { filter: brightness(0.5); transform: none; box-shadow: 0 6px 0 #333; }
 
     .back-door {
       flex: 1; background-color: #1a1a1a;
@@ -95,22 +96,24 @@
       position: relative;
     }
 
-    .winder-area { position: absolute; right: 20px; top: 20px; display: flex; flex-direction: column; align-items: center; }
+    .winder-area { position: absolute; right: 25px; top: 25px; display: flex; flex-direction: column; align-items: center; }
     .winder-container {
-      width: 80px; height: 40px; background: #0a0a0a; border: 3px solid #222; border-radius: 4px; overflow: hidden; position: relative; box-shadow: inset 0 0 10px #000;
+      width: 110px; height: 50px; background: #0a0a0a; border: 4px solid #222; border-radius: 6px; overflow: hidden; position: relative; box-shadow: inset 0 0 15px #000;
     }
     #winder-wheel {
-      width: 200%; height: 100%; background: repeating-linear-gradient(to right, #444, #444 4px, #111 4px, #111 8px);
+      width: 200%; height: 100%; background: repeating-linear-gradient(to right, #444, #444 5px, #111 5px, #111 10px);
       position: absolute; left: 0; top: 0;
     }
-    .winder-label { font-size: 0.6rem; color: #888; margin-top: 5px; font-family: sans-serif;}
+    .winder-label { font-size: 0.7rem; color: #888; margin-top: 8px; font-family: sans-serif; font-weight: bold;}
 
     #darkroom-btn { 
-      position: absolute; left: 20px; bottom: 20px; background: #2a2a2a; color: #aaa; border: 2px solid #111;
-      padding: 10px 15px; font-size: 0.7rem; font-weight: bold; border-radius: 2px; box-shadow: 2px 2px 5px #000; cursor: pointer;
+      position: absolute; left: 25px; bottom: 25px; background: #2a2a2a; color: #999; border: 3px solid #111;
+      padding: 12px 20px; font-size: 0.8rem; font-weight: bold; border-radius: 4px; box-shadow: 2px 2px 8px #000; cursor: pointer; text-transform: uppercase;
     }
 
-    /* 2. DARKROOM VIEW */
+    /* =========================================
+       2. DARKROOM VIEW & RIPPLES
+       ========================================= */
     #darkroom-view { 
       display: none; grid-template-columns: repeat(3, 1fr); gap: 15px; 
       padding: 15px; height: 100%; width: 100%; background-color: #1a1a1a; position: relative; box-sizing: border-box; 
@@ -124,24 +127,42 @@
 
     .tray { 
       background-color: #2a2a2a; border-radius: 12px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 6px #d3d3d3; 
-      display: flex; align-items: center; justify-content: center; color: #555; font-weight: bold; font-size: 1.2rem; position: relative;
+      display: flex; align-items: center; justify-content: center; color: #555; font-weight: bold; font-size: 1.2rem; position: relative; overflow: hidden;
     }
-    .tray-label { position: absolute; pointer-events: none; }
+    .tray-label { position: absolute; pointer-events: none; z-index: 2; }
     
+    /* Liquid Ripple Effect */
+    .liquid-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 10%, transparent 20%),
+                  radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 15%, transparent 25%);
+      background-size: 150px 150px; opacity: 0; pointer-events: none; z-index: 6; /* sits above the photo */
+      transition: opacity 0.5s;
+    }
+    .liquid-active .liquid-overlay {
+      opacity: 1; animation: ripple-move 4s infinite linear;
+    }
+    @keyframes ripple-move {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 150px 150px, -150px 75px; }
+    }
+    
+    /* The Photo */
     #active-print {
       width: 70%; height: auto; aspect-ratio: 4/3; object-fit: cover; 
-      border: 6px solid #e0e0e0; border-radius: 2px; opacity: 0; z-index: 5; display: none; cursor: grab; touch-action: none; position: absolute; transition: opacity 1s;
+      border: 6px solid #e0e0e0; border-radius: 2px; opacity: 0; z-index: 5; display: none; cursor: grab; touch-action: none; position: absolute; 
+      /* Transition is updated dynamically in JS depending on the bath */
     }
     #active-print:active { cursor: grabbing; }
 
     @keyframes pulse-process {
-      0% { filter: brightness(0.5); transform: scale(0.98); }
-      50% { filter: brightness(1.2); transform: scale(1); }
-      100% { filter: brightness(0.5); transform: scale(0.98); }
+      0% { filter: brightness(0.6); transform: scale(0.98); }
+      50% { filter: brightness(1.1); transform: scale(1); }
+      100% { filter: brightness(0.6); transform: scale(0.98); }
     }
-    .processing { animation: pulse-process 1.5s infinite; pointer-events: none !important; }
+    .processing { animation: pulse-process 2s infinite; pointer-events: none !important; }
 
-    .dev-stage-1 { opacity: 0.3 !important; } 
+    .dev-stage-1 { opacity: 0.4 !important; } 
     .dev-stage-2 { opacity: 0.7 !important; } 
     .dev-stage-3 { opacity: 1.0 !important; } 
 
@@ -149,15 +170,27 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: red; mix-blend-mode: multiply; pointer-events: none; opacity: 0.85; z-index: 10; 
     }
     
+    /* Stealthy Darkroom Actions UI */
     .darkroom-actions {
-      position: absolute; bottom: 15px; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 20;
+      position: absolute; bottom: 20px; left: 20px; right: 20px; 
+      display: flex; justify-content: space-between; align-items: center; z-index: 20;
     }
-    .dr-btn { padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
-    #exit-darkroom-btn { background: #fff; color: #000; }
-    #hang-btn { background: #4CAF50; color: white; display: none; }
-    #view-clothesline-btn { background: #2196F3; color: white; }
+    .dr-btn { 
+      background: #2a2a2a; color: #888; border: 2px solid #111; 
+      padding: 12px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 8px #000;
+      transition: all 0.1s;
+    }
+    .dr-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #000; }
+    
+    #exit-darkroom-btn { 
+      width: 55px; height: 55px; border-radius: 50%; padding: 0; font-size: 1.6rem; 
+      display: flex; align-items: center; justify-content: center;
+    }
+    #hang-btn { display: none; }
 
-    /* 3. CLOTHESLINE VIEW */
+    /* =========================================
+       3. CLOTHESLINE VIEW
+       ========================================= */
     #clothesline-view {
       display: none; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; background: #2c2c2c; flex-direction: column; position: relative;
     }
@@ -167,9 +200,11 @@
       height: 150px; border: 8px solid #eee; border-radius: 2px;
       box-shadow: 3px 5px 15px rgba(0,0,0,0.6); transform-origin: top center; cursor: pointer;
     }
-    #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 4px; font-weight:bold; z-index: 10;}
+    #back-to-darkroom-btn { position: absolute; bottom: 20px; left: 20px; background: #2a2a2a; color: #aaa; border: 2px solid #111; padding: 12px 20px; border-radius: 6px; font-weight:bold; z-index: 10;}
 
-    /* 4. LIGHTBOX & ZOOM */
+    /* =========================================
+       4. LIGHTBOX & ZOOM
+       ========================================= */
     #lightbox {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; align-items: center; justify-content: center; flex-direction: column;
     }
@@ -177,8 +212,7 @@
     #lightbox img { max-width: 90%; max-height: 80%; border: 15px solid #eee; pointer-events: none;}
     
     .lightbox-ui { position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 105; }
-    #share-btn { background: #4CAF50; color: #fff; border: none; padding: 15px 25px; border-radius: 4px; font-weight: bold; cursor: pointer;}
-    #close-lightbox { background: #ff4444; color: #fff; border: none; padding: 15px 25px; border-radius: 4px; font-weight: bold; cursor: pointer;}
+    .lb-btn { background: #2a2a2a; color: #aaa; border: 2px solid #111; padding: 15px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 8px #000; }
   </style>
 </head>
 <body>
@@ -186,27 +220,21 @@
   <div id="start-screen">
     <button id="start-btn">TURN ON CAMERA</button>
   </div>
-
   <div id="rotate-warning">Rotate phone sideways.</div>
 
   <div id="app-container">
     
+    <!-- CAMERA HTML -->
     <div id="camera-view">
       <div class="top-plate">
-        
-        <!-- NEW INTERACTIVE DIALS -->
         <div class="top-left-controls">
           <button class="tiny-dial" id="film-btn">F:B&W</button>
           <button class="tiny-dial" id="iso-btn">I:400</button>
           <button class="tiny-dial" id="zoom-btn">Z:1X</button>
         </div>
-
         <div class="viewfinder-hump">
-          <div class="viewfinder-square">
-            <video id="viewfinder" autoplay playsinline></video>
-          </div>
+          <div class="viewfinder-square"><video id="viewfinder" autoplay playsinline></video></div>
         </div>
-
         <div class="top-right-controls">
           <div class="film-counter-window"><span id="counter-text">12</span></div>
           <button id="shutter-btn" disabled></button>
@@ -223,29 +251,49 @@
       <canvas id="capture-canvas" style="display: none;"></canvas>
     </div>
 
+    <!-- DARKROOM HTML -->
     <div id="darkroom-view">
       <div id="undeveloped-pile">FILM<br>(0)</div>
-      <div class="tray developer" id="tray-dev"><div class="tray-label">Developer</div><img id="active-print" class="dev-stage-0" src="" draggable="false"></div>
-      <div class="tray stop-bath" id="tray-stop"><div class="tray-label">Stop</div></div>
-      <div class="tray fixer" id="tray-fix"><div class="tray-label">Fixer</div></div>
+      
+      <div class="tray developer" id="tray-dev">
+        <div class="tray-label">Developer</div><div class="liquid-overlay"></div>
+        <img id="active-print" class="dev-stage-0" src="" draggable="false">
+      </div>
+      <div class="tray stop-bath" id="tray-stop">
+        <div class="tray-label">Stop</div><div class="liquid-overlay"></div>
+      </div>
+      <div class="tray fixer" id="tray-fix">
+        <div class="tray-label">Fixer</div><div class="liquid-overlay"></div>
+      </div>
+      
       <div class="safelight-overlay"></div>
+      
+      <!-- Flex container evenly spaces the 3 buttons -->
       <div class="darkroom-actions">
-        <button class="dr-btn" id="exit-darkroom-btn">Camera</button>
-        <button class="dr-btn" id="hang-btn">HANG PHOTO</button>
-        <button class="dr-btn" id="view-clothesline-btn">Clothesline</button>
+        <div style="flex: 1; text-align: left;">
+          <button class="dr-btn" id="exit-darkroom-btn">📷</button>
+        </div>
+        <div style="flex: 1; text-align: center;">
+          <button class="dr-btn" id="hang-btn">HANG PHOTO</button>
+        </div>
+        <div style="flex: 1; text-align: right;">
+          <button class="dr-btn" id="view-clothesline-btn">CLOTHESLINE</button>
+        </div>
       </div>
     </div>
 
+    <!-- CLOTHESLINE HTML -->
     <div id="clothesline-view">
       <div class="wire"></div>
       <div id="gallery"></div>
       <button id="back-to-darkroom-btn">Back</button>
     </div>
 
+    <!-- LIGHTBOX HTML -->
     <div id="lightbox">
       <div class="lightbox-ui">
-        <button id="close-lightbox">CLOSE</button>
-        <button id="share-btn">SHARE / PRINT</button>
+        <button class="lb-btn" id="close-lightbox">CLOSE</button>
+        <button class="lb-btn" id="share-btn">SHARE</button>
       </div>
       <div id="lightbox-zoom-container"><img id="lightbox-img" src=""></div>
     </div>
@@ -253,8 +301,8 @@
   </div>
 
   <script>
-    // --- AUDIO (Set to look for local files in your GitHub repository) ---
-    const shutterSound = new Audio('shutter.mp3'); 
+    // --- AUDIO (Upload these local files to your GitHub) ---
+    const shutterSound = new Audio('shutter.wav'); 
     const filmWindSound = new Audio('wind.wav'); 
 
     // --- DOM Elements ---
@@ -283,45 +331,27 @@
     let isFilmWound = false; 
     let filmRoll = []; 
     
-    // Dials State
     const filmModes = [{ id: 'B&W', filter: 'grayscale(100%) contrast(1.2)' }, { id: 'SEP', filter: 'sepia(100%) contrast(1.1)' }, { id: 'COL', filter: 'contrast(1.1) saturate(1.2)' }];
     let currentFilmIdx = 0;
     
     const isoLevels = [ { id: '100', bright: 0.6 }, { id: '200', bright: 0.8 }, { id: '400', bright: 1.0 }, { id: '800', bright: 1.2 } ];
-    let currentIsoIdx = 2; // Default 400
+    let currentIsoIdx = 2;
 
     let currentZoom = 1;
-
-    // --- DIAL LOGIC ---
     const filmBtn = document.getElementById('film-btn');
     const isoBtn = document.getElementById('iso-btn');
     const zoomBtn = document.getElementById('zoom-btn');
 
     function applyCameraSettings() {
-      // Apply filters to live feed so you see what you get
       const fMode = filmModes[currentFilmIdx];
       const iMode = isoLevels[currentIsoIdx];
       viewfinder.style.filter = `${fMode.filter} brightness(${iMode.bright})`;
       viewfinder.style.transform = `scale(${currentZoom})`;
     }
 
-    filmBtn.addEventListener('click', () => {
-      currentFilmIdx = (currentFilmIdx + 1) % filmModes.length;
-      filmBtn.innerText = `F:${filmModes[currentFilmIdx].id}`;
-      applyCameraSettings();
-    });
-
-    isoBtn.addEventListener('click', () => {
-      currentIsoIdx = (currentIsoIdx + 1) % isoLevels.length;
-      isoBtn.innerText = `I:${isoLevels[currentIsoIdx].id}`;
-      applyCameraSettings();
-    });
-
-    zoomBtn.addEventListener('click', () => {
-      currentZoom = currentZoom === 1 ? 2 : 1;
-      zoomBtn.innerText = `Z:${currentZoom}X`;
-      applyCameraSettings();
-    });
+    filmBtn.addEventListener('click', () => { currentFilmIdx = (currentFilmIdx + 1) % filmModes.length; filmBtn.innerText = `F:${filmModes[currentFilmIdx].id}`; applyCameraSettings(); });
+    isoBtn.addEventListener('click', () => { currentIsoIdx = (currentIsoIdx + 1) % isoLevels.length; isoBtn.innerText = `I:${isoLevels[currentIsoIdx].id}`; applyCameraSettings(); });
+    zoomBtn.addEventListener('click', () => { currentZoom = currentZoom === 1 ? 2 : 1; zoomBtn.innerText = `Z:${currentZoom}X`; applyCameraSettings(); });
 
     // --- FULLSCREEN & CAMERA START ---
     startScreen.addEventListener('click', async () => {
@@ -330,8 +360,7 @@
       if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(e => {});
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        viewfinder.srcObject = stream;
-        applyCameraSettings();
+        viewfinder.srcObject = stream; applyCameraSettings();
       } catch (err) { console.log(err); }
     });
 
@@ -348,13 +377,11 @@
       if (!swipeStartX || isFilmWound || shotsRemaining === 0) return;
       let diff = e.clientX - swipeStartX;
       if (diff > 0) {
-        swipeDistance += diff;
-        swipeStartX = e.clientX; 
+        swipeDistance += diff; swipeStartX = e.clientX; 
         winderWheel.style.transform = `translateX(${-swipeDistance % 20}px)`;
         if (swipeDistance > 150) {
-          isFilmWound = true; swipeStartX = 0; swipeDistance = 0;
-          shutterBtn.disabled = false;
-          filmWindSound.currentTime = 0; filmWindSound.play().catch(()=>{}); // SINGLE sound trigger
+          isFilmWound = true; swipeStartX = 0; swipeDistance = 0; shutterBtn.disabled = false;
+          filmWindSound.currentTime = 0; filmWindSound.play().catch(()=>{});
           if(navigator.vibrate) navigator.vibrate([30, 50, 30]); 
         }
       }
@@ -367,53 +394,69 @@
       shutterSound.currentTime = 0; shutterSound.play().catch(e => {});
       if (navigator.vibrate) navigator.vibrate(100);
 
-      // BAKING THE COLORS INTO THE CANVAS
       captureCanvas.width = viewfinder.videoWidth; captureCanvas.height = viewfinder.videoHeight;
-      
-      const fMode = filmModes[currentFilmIdx];
-      const iMode = isoLevels[currentIsoIdx];
+      const fMode = filmModes[currentFilmIdx]; const iMode = isoLevels[currentIsoIdx];
       ctx.filter = `${fMode.filter} brightness(${iMode.bright})`;
       
-      // Handle digital zoom cropping
       if (currentZoom === 2) {
         const w = captureCanvas.width; const h = captureCanvas.height;
         ctx.drawImage(viewfinder, w/4, h/4, w/2, h/2, 0, 0, w, h);
-      } else {
-        ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height);
-      }
+      } else { ctx.drawImage(viewfinder, 0, 0, captureCanvas.width, captureCanvas.height); }
       
       filmRoll.push(captureCanvas.toDataURL('image/jpeg', 0.9));
       shotsRemaining--; counterText.innerText = shotsRemaining;
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
-
       isFilmWound = false; shutterBtn.disabled = true;
     });
 
-    // --- DARKROOM ---
+    // --- DARKROOM TIMER & RIPPLES ---
     let isPhotoProcessing = false; let currentTrayId = '';
+    
     undevelopedPile.addEventListener('click', () => {
       if (filmRoll.length === 0) return;
       if (activePrint.style.display === 'block') { alert("Finish developing the current photo first!"); return; }
 
       const photoData = filmRoll.shift(); 
       undevelopedPile.innerHTML = `FILM<br>(${filmRoll.length})`;
-      activePrint.src = photoData; activePrint.style.display = 'block'; activePrint.className = ''; 
+      activePrint.src = photoData; activePrint.style.display = 'block'; activePrint.className = 'dev-stage-0'; 
       devTray.appendChild(activePrint); setTranslate(0, 0, activePrint); triggerBathTimer('tray-dev');
     });
 
     function triggerBathTimer(trayId) {
       isPhotoProcessing = true; currentTrayId = trayId; hangBtn.style.display = 'none';
+      
+      // Determine timer logic
+      const isDev = trayId === 'tray-dev';
+      const durationMs = isDev ? 10000 : 3000;
+      
+      // Setup Visuals
+      const trayEl = document.getElementById(trayId);
+      trayEl.classList.add('liquid-active');
       activePrint.classList.add('processing');
       if (navigator.vibrate) navigator.vibrate(50);
+      
+      // Apply exact CSS fade duration to match the bath time
+      activePrint.style.transition = `opacity ${durationMs / 1000}s linear`;
+      
+      // Trigger Opacity Class
+      // setTimeout wrapper ensures the browser registers the transition property first
       setTimeout(() => {
-        isPhotoProcessing = false; activePrint.classList.remove('processing');
-        if (navigator.vibrate) navigator.vibrate([20, 50, 20]); 
         if (trayId === 'tray-dev') activePrint.className = 'dev-stage-1';
         if (trayId === 'tray-stop') activePrint.className = 'dev-stage-2';
-        if (trayId === 'tray-fix') { activePrint.className = 'dev-stage-3'; hangBtn.style.display = 'block'; }
-      }, 3000); 
+        if (trayId === 'tray-fix') activePrint.className = 'dev-stage-3';
+      }, 50);
+
+      // End of Bath Processing
+      setTimeout(() => {
+        isPhotoProcessing = false; 
+        activePrint.classList.remove('processing');
+        trayEl.classList.remove('liquid-active');
+        if (navigator.vibrate) navigator.vibrate([20, 50, 20]); 
+        if (trayId === 'tray-fix') hangBtn.style.display = 'block'; 
+      }, durationMs); 
     }
 
+    // --- DRAG AND DROP ---
     let isDragging = false; let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
     activePrint.addEventListener("pointerdown", e => {
       if (isPhotoProcessing) return; 
@@ -428,6 +471,7 @@
       }
     });
     function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
+    
     document.addEventListener("pointerup", e => {
       if (!isDragging) return;
       isDragging = false; activePrint.style.zIndex = 5;
